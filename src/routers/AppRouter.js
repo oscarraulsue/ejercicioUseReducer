@@ -1,30 +1,40 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
     HashRouter as Router,
     Switch,
-    Route,
-    Redirect,
+    Redirect
 } from 'react-router-dom';
 import Counter from '../components/Counter';
-import { Login } from '../components/Login';
-import Navbar from '../components/Navbar';
+import { UserContext } from '../components/UseContext';
+import AuthRouter from './AuthRouter';
+import { PrivateRouter } from './PrivateRouter';
+import { PublicRouter } from './PublicRouter';
 
 const AppRouter = () => {
+    const [isAuth, setIsAuth] = useState(false)
     return (
+        <UserContext.Provider value={{isAuth, setIsAuth}}>
         <Router>
-            <div>
-                <Navbar />
+        
                 <div className="container">
                     <Switch>
-                        <Route exact path="/" component={Counter} />
-                        <Route exact path="/login" component={Login} />
+                    <PublicRouter
+                    path="/auth"
+                    component={AuthRouter}
+                    isAuthenticated={isAuth}
+                />
+                <PrivateRouter
+                 path="/"
+                 component={Counter}
+                 isAuthenticated={isAuth}
+                />
 
-                        <Redirect to="/" />
-
+                <Redirect to="/auth/login" />
                     </Switch>
                 </div>
-            </div>
+            
         </Router>
+        </UserContext.Provider>
     )
 }
 
